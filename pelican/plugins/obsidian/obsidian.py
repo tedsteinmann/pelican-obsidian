@@ -38,7 +38,7 @@ def get_file_and_linkname(match):
 
 class ObsidianMarkdownReader(MarkdownReader):
     """
-    Change the format of various links to the accepted case of pelican.
+    Change the format of various links to the accepted case of pelican, and convert tags from bullet-point to comma-separated.
     """
 
     def __init__(self, *args, **kwargs):
@@ -70,27 +70,51 @@ class ObsidianMarkdownReader(MarkdownReader):
                     linkname=linkname, path=path, filename=filename
                 )
             else:
-                # don't show it at all since it will be broken
-                link_structure = ''
-
+                link_structure = '![{linkname}]({filename})'.format(linkname=linkname)
             return link_structure
 
         text = file_re.sub(file_replacement, text)
-        text = link_re.sub(link_replacement, text)
-        return text
+        return link_re.sub(link_replacement, text)
+
+    def convert_tags_to_comma_separated(self, text):
+        """
+        Convert bullet point tags in the front matter to comma-separated tags.
+        """
+        # Match the YAML front matter with tags in bullet list form
+        tag_pattern = re.compile(r'tags:\n((?:\s*-\s*\w+\s*\n)+)', re.MULTILINE)
+        
+        def convert_tag_list(match):
+            # Get the list of tags (the bullet-point list)
+            tag_list = match.group(1)
+            
+            # Convert each bullet-pointed tag to a comma-separated list
+            tags = [tag.strip('- ').strip() for tag in tag_list.splitlines() if tag.strip()]
+            
+            # Return the new format: "tags: tag1, tag2, tag3"
+            return f'tags: {", ".join(tags)}\n'
+        
+        # Replace bullet point tags with comma-separated tags
+        return tag_pattern.sub(convert_tag_list, text)
 
     def read(self, source_path):
         """
-        Parse content and metadata of markdown files. Also changes the links to the acceptable format for pelican
+        Parse content and metadata of markdown files. This function also converts
+        Obsidian-style tags (bullet list) into a comma-separated format for Pelican.
         """
-
         self._source_path = source_path
         self._md = Markdown(**self.settings['MARKDOWN'])
 
         with pelican_open(source_path) as text:
+            # Preprocess the text to replace bullet point tags with comma-separated tags
+            text = self.convert_tags_to_comma_separated(text)
+            
+            # Replace Obsidian-style links with Pelican-compatible links
             text = self.replace_obsidian_links(text)
+            
+            # Convert markdown content
             content = self._md.convert(text)
 
+        # Parse metadata if available
         if hasattr(self._md, 'Meta'):
             metadata = self._parse_metadata(self._md.Meta)
         else:
