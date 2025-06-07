@@ -58,6 +58,15 @@ Files are similar:
 ![[photo.jpg | custom alt text]]
 ```
 
+PDF files referenced using image syntax will be embedded via an `<iframe>`. You
+can pass PDF viewer options using a hash (`#`) after the filename. The iframe
+defaults to `width="100%"`. For example
+`![[Document.pdf#page=2&height=400]]` will render
+
+```
+<iframe src="{static}/path/Document.pdf#page=2" width="100%" height="400"></iframe>
+```
+
 They explain more about the syntax in the section on [how to embed files](https://help.obsidian.md/How+to/Embed+files)
 
 
