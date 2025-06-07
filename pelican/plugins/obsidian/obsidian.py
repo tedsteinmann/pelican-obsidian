@@ -75,8 +75,12 @@ class ObsidianMarkdownReader(YAMLMetadataReader):
             path = FILE_PATHS.get(filename)
             if path:
                 if filename.lower().endswith('.pdf'):
-                    link_structure = '<iframe src="{{static}}{path}{filename}"></iframe>'.format(
-                        path=path, filename=filename
+                    link_structure = (
+                        '<iframe src="{{static}}{path}{filename}" width="100%" '
+                        'height="800px" style="border: none;"></iframe>'.format(
+                            path=path,
+                            filename=filename,
+                        )
                     )
                 else:
                     link_structure = '![{linkname}]({{static}}{path}{filename})'.format(
