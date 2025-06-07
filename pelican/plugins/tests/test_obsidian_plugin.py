@@ -95,7 +95,27 @@ def test_internal_image_in_article(obsidian):
 def test_internal_pdf_in_article(obsidian):
     """PDFs embedded with image syntax are rendered using iframes"""
     content, meta = obsidian
-    assert '<iframe src="{static}/assets/docs/sample.pdf"></iframe>' == content
+    assert '<iframe src="{static}/assets/docs/sample.pdf" width="100%"></iframe>' == content
+
+
+@pytest.mark.parametrize('path', ["internal_pdf_options"])
+def test_pdf_with_page_and_height(obsidian):
+    """PDF embeds support page and height parameters."""
+    content, meta = obsidian
+    assert (
+        '<iframe src="{static}/assets/docs/sample.pdf#page=2" width="100%" height="300"></iframe>'
+        == content
+    )
+
+
+@pytest.mark.parametrize('path', ["internal_pdf_width"])
+def test_pdf_with_custom_width(obsidian):
+    """PDF embeds support specifying width."""
+    content, meta = obsidian
+    assert (
+        '<iframe src="{static}/assets/docs/sample.pdf" width="200"></iframe>'
+        == content
+    )
 
 
 @pytest.mark.parametrize('path', ["internal_link"])

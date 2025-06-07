@@ -72,21 +72,35 @@ class ObsidianMarkdownReader(YAMLMetadataReader):
 
         def file_replacement(match):
             filename, linkname = get_file_and_linkname(match)
-            path = FILE_PATHS.get(filename)
-            if path:
-                if filename.lower().endswith('.pdf'):
-                    link_structure = '<iframe src="{{static}}{path}{filename}"></iframe>'.format(
-                        path=path, filename=filename
-                    )
-                else:
-                    link_structure = '![{linkname}]({{static}}{path}{filename})'.format(
-                        linkname=linkname, path=path, filename=filename
-                    )
-            else:
-                # don't show it at all since it will be broken
-                link_structure = ''
+            base_name, fragment = (filename.split('#', 1) + [''])[:2]
+            path = FILE_PATHS.get(base_name)
+            if not path:
+                return ''
 
-            return link_structure
+            if base_name.lower().endswith('.pdf'):
+                params = {}
+                if fragment:
+                    for part in fragment.split('&'):
+                        if '=' in part:
+                            key, value = part.split('=', 1)
+                            params[key.lower()] = value
+
+                src = '{{static}}{path}{base}'.format(path=path, base=base_name)
+                other = '&'.join(
+                    f"{k}={v}" for k, v in params.items() if k not in {'height', 'width'}
+                )
+                if other:
+                    src += '#' + other
+
+                width_attr = ' width="{}"'.format(params.get('width', '100%'))
+                height_attr = (
+                    f" height=\"{params['height']}\"" if 'height' in params else ''
+                )
+                return f'<iframe src="{src}"{width_attr}{height_attr}></iframe>'
+
+            return '![{linkname}]({{static}}{path}{filename})'.format(
+                linkname=linkname, path=path, filename=base_name
+            )
 
         text = file_re.sub(file_replacement, text)
         text = link_re.sub(link_replacement, text)
