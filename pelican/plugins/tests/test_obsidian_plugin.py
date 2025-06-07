@@ -91,6 +91,13 @@ def test_internal_image_in_article(obsidian):
     assert '<p><img alt="pelican-in-rock.webp" src="{static}/assets/images/pelican-in-rock.webp"></p>' == content
 
 
+@pytest.mark.parametrize('path', ["internal_pdf"])
+def test_internal_pdf_in_article(obsidian):
+    """PDFs embedded with image syntax are rendered using iframes"""
+    content, meta = obsidian
+    assert '<iframe src="{static}/assets/docs/sample.pdf"></iframe>' == content
+
+
 @pytest.mark.parametrize('path', ["internal_link"])
 def test_external_link(obsidian):
     """Able to use normal markdown links which renders properly"""

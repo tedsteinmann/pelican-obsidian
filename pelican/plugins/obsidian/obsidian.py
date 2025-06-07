@@ -74,9 +74,14 @@ class ObsidianMarkdownReader(YAMLMetadataReader):
             filename, linkname = get_file_and_linkname(match)
             path = FILE_PATHS.get(filename)
             if path:
-                link_structure = '![{linkname}]({{static}}{path}{filename})'.format(
-                    linkname=linkname, path=path, filename=filename
-                )
+                if filename.lower().endswith('.pdf'):
+                    link_structure = '<iframe src="{{static}}{path}{filename}"></iframe>'.format(
+                        path=path, filename=filename
+                    )
+                else:
+                    link_structure = '![{linkname}]({{static}}{path}{filename})'.format(
+                        linkname=linkname, path=path, filename=filename
+                    )
             else:
                 # don't show it at all since it will be broken
                 link_structure = ''
@@ -154,7 +159,10 @@ def populate_files_and_articles(article_generator):
     __log__.debug('Found %d articles', len(ARTICLE_PATHS))
 
     # Get list of all other relevant files
-    globs = [base_path.glob('**/*.{}'.format(ext)) for ext in ['png', 'jpg', 'jpeg', 'svg', 'apkg', 'gif', 'webp', 'avif']]
+    globs = [
+        base_path.glob('**/*.{}'.format(ext))
+        for ext in ['png', 'jpg', 'jpeg', 'svg', 'apkg', 'gif', 'webp', 'avif', 'pdf']
+    ]
     files = chain(*globs)
     for _file in files:
         full_path, filename_w_ext = os.path.split(_file)
