@@ -95,7 +95,10 @@ def test_internal_image_in_article(obsidian):
 def test_internal_pdf_in_article(obsidian):
     """PDFs embedded with image syntax are rendered using iframes"""
     content, meta = obsidian
-    assert '<iframe src="{static}/assets/docs/sample.pdf"></iframe>' == content
+    assert (
+        '<iframe src="{static}/assets/docs/sample.pdf" width="100%" '
+        'height="800px" style="border: none;"></iframe>'
+    ) == content
 
 
 @pytest.mark.parametrize('path', ["internal_link"])

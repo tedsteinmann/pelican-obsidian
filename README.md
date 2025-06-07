@@ -58,7 +58,8 @@ Files are similar:
 ![[photo.jpg | custom alt text]]
 ```
 
-PDF files referenced using image syntax will be embedded via an `<iframe>`.
+PDF files referenced using image syntax will be embedded via an `<iframe>`
+with `width="100%"`, `height="800px"`, and `style="border: none;"`.
 
 They explain more about the syntax in the section on [how to embed files](https://help.obsidian.md/How+to/Embed+files)
 
