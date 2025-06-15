@@ -77,7 +77,10 @@ class ObsidianMarkdownReader(YAMLMetadataReader):
                 if filename.lower().endswith('.pdf'):
                     link_structure = (
                         '<iframe src="{{static}}{path}{filename}" width="100%" '
-                        'height="800px" style="border: none;"></iframe>'.format(
+                        'height="800px" style="border: none;"></iframe>'
+                        '<p><!-- browser fall back --> Click here to download. '
+                        '<a href="{{static}}{path}{filename}" target="_blank" '
+                        'rel="noopener">Download the PDF</a></p>'.format(
                             path=path,
                             filename=filename,
                         )
