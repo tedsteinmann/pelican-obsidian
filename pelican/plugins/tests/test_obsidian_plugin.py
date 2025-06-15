@@ -97,7 +97,10 @@ def test_internal_pdf_in_article(obsidian):
     content, meta = obsidian
     assert (
         '<iframe src="{static}/assets/docs/sample.pdf" width="100%" '
-        'height="800px" style="border: none;"></iframe>'
+        'height="800px" style="border: none;"></iframe>\n'
+        '<p><!-- browser fall back --> Click here to download. '
+        '<a href="{static}/assets/docs/sample.pdf" target="_blank" '
+        'rel="noopener">Download the PDF</a></p>'
     ) == content
 
 
