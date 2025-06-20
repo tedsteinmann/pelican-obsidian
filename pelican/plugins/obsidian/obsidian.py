@@ -85,7 +85,7 @@ class ObsidianMarkdownReader(YAMLMetadataReader):
                             key, value = part.split('=', 1)
                             params[key.lower()] = value
 
-                src = '{{static}}{path}{base}'.format(path=path, base=base_name)
+                src = '{path}{base}'.format(path=path, base=base_name)
                 other = '&'.join(
                     f"{k}={v}" for k, v in params.items() if k not in {'height', 'width'}
                 )
@@ -98,7 +98,7 @@ class ObsidianMarkdownReader(YAMLMetadataReader):
                 )
                 return f'<iframe src="{src}"{width_attr}{height_attr}></iframe>'
 
-            return '![{linkname}]({{static}}{path}{filename})'.format(
+            return '![{linkname}]({path}{filename})'.format(
                 linkname=linkname, path=path, filename=base_name
             )
 
